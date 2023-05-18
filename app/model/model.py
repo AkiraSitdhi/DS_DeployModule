@@ -21,18 +21,16 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.4303, 0.4301, 0.4139], std=[0.2186, 0.2140, 0.2205])
 ])
 
-def predict(url):
+def predictOutput(url_string : str):
+    urll = str(url_string)
     try:
-        with urllib.request.urlopen(url) as f:
+        with urllib.request.urlopen(urll) as f:
             image = Image.open(f)
         tensor_image = transform(image)
         tensor_image = tensor_image.numpy().astype(np.float32).reshape((1, 3, 224, 224))
         prediction = model.run([], {'input': tensor_image})[0]
-        prediction = np.vectorize(thresholding_lambda)(prediction)
+        prediction = np.vectorize(thresholding_lambda)(prediction)[0].tolist()
+        return prediction
     except Exception as e:
-        print(str(e))
+        print('DEBUGGGGGGGGGGGGGGGGGGGG',str(e))
         return None
-
-    return prediction[0]
-
-

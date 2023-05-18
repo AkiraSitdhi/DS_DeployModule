@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from app.model.model import predict
+from app.model.model import predictOutput
 
 app = FastAPI()
 
-class Url(BaseModel):
+class url(BaseModel):
     url: str
 
 class Prediction(BaseModel):
@@ -15,8 +15,8 @@ def home():
     return {"Test":"OK"}
 
 @app.post("/predict",response_model=Prediction)
-def predict(payload: Url):
-    prediction = predict(Url)
+def predict(payload: url):
+    prediction = predictOutput(payload.url)
     return {"prediction":prediction}
 
 
