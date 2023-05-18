@@ -1,4 +1,5 @@
 from pathlib import Path
+from flask import Flask,request,jsonify
 
 import os
 import numpy as np
@@ -34,3 +35,31 @@ def predictOutput(url_string : str):
     except Exception as e:
         print('DEBUGGGGGGGGGGGGGGGGGGGG',str(e))
         return None
+    
+
+app = Flask(__name__)
+
+@app.route("/",methods=["GET","POST"])
+def index():
+    if request.method == "POST":
+        data = request.get_json()
+        url = data.get("url")
+        if url is None or url=="":
+            return jsonify({"error": "invalid url"})
+        try:
+            with urllib.request.urlopen(url) as f:
+                image = Image.open(f)
+            tensor_image = transform(image)
+            tensor_image = tensor_image.numpy().astype(np.float32).reshape((1, 3, 224, 224))
+            prediction = model.run([], {'input': tensor_image})[0]
+            prediction = np.vectorize(thresholding_lambda)(prediction)[0].tolist()
+            return jsonify({"prediction":prediction})
+        except Exception as e:
+            print('DEBUGGGGGGGGG')
+            return jsonify({"error":str(e)})
+
+
+    return "OK"
+
+if __name__ == "__main__":
+    app.run(debug=True)
