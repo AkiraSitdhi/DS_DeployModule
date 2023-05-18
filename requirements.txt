@@ -1,0 +1,4 @@
+onnxruntime
+torchvision
+Pillow
+fastapi
