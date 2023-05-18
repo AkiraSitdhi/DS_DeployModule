@@ -1,5 +1,5 @@
 onnxruntime
 torchvision
 Pillow
-Flask==2.1.0
+Flask
 gunicorn
